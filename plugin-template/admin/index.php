@@ -1,99 +1,76 @@
 <?php
 
-/* Reminder: always indent with 4 spaces (no tabs). */
-// +---------------------------------------------------------------------------+
-// | Foo Bar Plugin 0.0                                                        |
-// +---------------------------------------------------------------------------+
-// | index.php                                                                 |
-// |                                                                           |
-// | Plugin administration page                                                |
-// +---------------------------------------------------------------------------+
-// | Copyright (C) yyyy by the following authors:                              |
-// |                                                                           |
-// | Authors: author name goes here                                            |
-// +---------------------------------------------------------------------------+
-// | Created with the Geeklog Plugin Toolkit.                                  |
-// +---------------------------------------------------------------------------+
-// |                                                                           |
-// | This program is free software; you can redistribute it and/or             |
-// | modify it under the terms of the GNU General Public License               |
-// | as published by the Free Software Foundation; either version 2            |
-// | of the License, or (at your option) any later version.                    |
-// |                                                                           |
-// | This program is distributed in the hope that it will be useful,           |
-// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
-// | GNU General Public License for more details.                              |
-// |                                                                           |
-// | You should have received a copy of the GNU General Public License         |
-// | along with this program; if not, write to the Free Software Foundation,   |
-// | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
-// |                                                                           |
-// +---------------------------------------------------------------------------+
-
 /**
- * @package FooBar
+ * Admin page template for plugins (Geeklog 2.2.2+)
+ *
+ * Place in plugins/<plugin>/admin/index.php
+ * Uses COM_createHTMLDocument() instead of COM_siteHeader()/COM_siteFooter().
  */
 
 require_once '../../../lib-common.php';
 require_once '../../auth.inc.php';
 
-$display = '';
+global $_CONF, $_USER, $_PLUGINS, $LANG_ACCESS, $LANG_FOOBAR_1;
 
-// Ensure user even has the rights to access this page
-if (! SEC_hasRights('foobar.admin')) {
-    $display .= COM_siteHeader('menu', $MESSAGE[30])
-             . COM_showMessageText($MESSAGE[29], $MESSAGE[30])
-             . COM_siteFooter();
+// Load plugin language if not already loaded (best-effort)
+$plugin_path = $_CONF['path'] . 'plugins/foobar/';
+$langfile = $plugin_path . 'language/' . $_CONF['language'] . '.php';
+if (file_exists($langfile)) {
+    require_once $langfile;
+} else {
+    require_once $plugin_path . 'language/english.php';
+}
 
-    // Log attempt to access.log
-    COM_accessLog("User {$_USER['username']} tried to illegally access the Foo Bar plugin administration screen.");
+// Ensure user has admin rights for this plugin
+if (!SEC_hasRights('foobar.admin')) {
+    $content = '';
+    $content .= COM_startBlock($LANG_ACCESS['accessdenied']);
+    $content .= COM_showMessageText($LANG_ACCESS['accessdeniedmsg'], $LANG_ACCESS['accessdenied']);
+    $content .= COM_endBlock();
 
-    echo $display;
+    echo COM_createHTMLDocument($content, array('pagetitle' => $LANG_ACCESS['accessdenied']));
     exit;
 }
 
-// Create a CSRF token for any forms on this page
+// Create token for forms
 $token = SEC_createToken();
 
-// Handle POST submissions (example) and validate CSRF token
+// Handle POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!SEC_checkToken()) {
-        // Invalid or missing CSRF token — log and show error
         COM_errorLog('Invalid CSRF token for foobar admin action');
-        $display .= COM_siteHeader('menu', $LANG_FOOBAR_1['plugin_name']);
-        $display .= COM_showMessageText($LANG_FOOBAR_1['plugin_name'], 'Invalid or expired form token. Please try again.');
-        $display .= COM_siteFooter();
-        echo $display;
+        $content = '';
+        $content .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
+        $content .= COM_showMessageText($LANG_FOOBAR_1['invalid_token'], $LANG_FOOBAR_1['plugin_name']);
+        $content .= COM_endBlock();
+        echo COM_createHTMLDocument($content, array('pagetitle' => $LANG_FOOBAR_1['plugin_name']));
         exit;
     }
 
-    // TODO: process form data safely here
-    // Example: $title = COM_sanitize($_POST['title']); etc.
+    // Example processing (sanitize inputs)
+    $title = isset($_POST['title']) ? COM_applyFilter($_POST['title']) : '';
 
-    $display .= COM_siteHeader('menu', $LANG_FOOBAR_1['plugin_name']);
-    $display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
-    $display .= '<p>Form submitted successfully.</p>';
-    $display .= COM_endBlock();
-    $display .= COM_siteFooter();
+    $content = '';
+    $content .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
+    $content .= '<p>' . $LANG_FOOBAR_1['form_submitted'] . '</p>';
+    $content .= COM_endBlock();
 
-    echo $display;
+    echo COM_createHTMLDocument($content, array('pagetitle' => $LANG_FOOBAR_1['plugin_name']));
     exit;
 }
 
-// MAIN — show admin landing page with example form that includes the CSRF token
-$display .= COM_siteHeader('menu', $LANG_FOOBAR_1['plugin_name']);
-$display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
-$display .= '<p>Welcome to the ' . $LANG_FOOBAR_1['plugin_name'] . ' plugin, ' . $_USER['username'] . '!</p>';
+// MAIN: admin UI
+$content = '';
+$content .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
+$content .= '<p>' . sprintf($LANG_FOOBAR_1['welcome_admin'], isset($_USER['username']) ? $_USER['username'] : '') . '</p>';
 
-// Example admin form (includes hidden token input)
-$display .= '<form method="post" action="' . COM_buildUrl($_CONF['site_url'] . '/plugins/foobar/admin/index.php') . '">';
-$display .= '<input type="hidden" name="token" value="' . $token . '" />';
-$display .= '<p><label for="title">Title:</label> <input type="text" name="title" id="title" value="" /></p>';
-$display .= '<p><input type="submit" value="Submit" /></p>';
-$display .= '</form>';
+$action = COM_buildUrl($_CONF['site_url'] . '/plugins/foobar/admin/index.php');
+$content .= '<form method="post" action="' . $action . '">';
+$content .= '<input type="hidden" name="token" value="' . $token . '" />';
+$content .= '<p><label for="title">' . $LANG_FOOBAR_1['label_title'] . '</label> <input type="text" name="title" id="title" value="" /></p>';
+$content .= '<p><input type="submit" value="' . $LANG_FOOBAR_1['submit'] . '" /></p>';
+$content .= '</form>';
 
-$display .= COM_endBlock();
-$display .= COM_siteFooter();
+$content .= COM_endBlock();
 
-echo $display;
+echo COM_createHTMLDocument($content, array('pagetitle' => $LANG_FOOBAR_1['plugin_name']));
