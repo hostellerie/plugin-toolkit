@@ -2,7 +2,7 @@
 
 /* Reminder: always indent with 4 spaces (no tabs). */
 // +---------------------------------------------------------------------------+
-// | Geeklog Plugin Toolkit: Plugin Generator 0.1.1                            |
+// | Geeklog Plugin Toolkit: Plugin Generator 0.2.0                            |
 // +---------------------------------------------------------------------------+
 // | plgen.php                                                                 |
 // |                                                                           |
@@ -31,13 +31,13 @@
 // +---------------------------------------------------------------------------+
 
 /**
-* @package PluginGenerator
-* @version 0.1.1
-*/
-define('VERSION', '0.1.1');
+ * @package PluginGenerator
+ * @version 0.2.0
+ */
+define('VERSION', '0.2.0');
 
 // this script will run locally, so reporting all errors shouldn't be a
-// a security issue ...
+// security issue ...
 error_reporting(E_ALL);
 
 // default data
@@ -45,6 +45,7 @@ $pluginData = array(
     'pi_name'         => 'foobar',
     'pi_display_name' => 'Foo Bar',
     'pi_version'      => '1.0',
+    'pi_gl_version'   => '2.2.2',
     'pi_homepage'     => 'http://www.example.com/',
     'author'          => 'John Doe',
     'email'           => 'john@example.com',
@@ -155,6 +156,9 @@ function patch($content, $plgdata)
     $content = str_replace('0.0.0', $plgdata['pi_version'], $content);
     $content = str_replace('http://www.example.com/', $plgdata['pi_homepage'],
                            $content);
+
+    // replace default Geeklog version in templates
+    $content = str_replace('2.2.2', $plgdata['pi_gl_version'], $content);
 
     return $content;
 }
@@ -371,6 +375,11 @@ $homepage = getValue($stdin, 'Plugin homepage?', 'e.g. for updates',
                      $pluginData['pi_homepage']);
 if (! empty($homepage)) {
     $pluginData['pi_homepage'] = $homepage;
+}
+
+$glversion = getValue($stdin, 'Minimum Geeklog version required by your plugin?', 'e.g. 2.2.2', $pluginData['pi_gl_version']);
+if (! empty($glversion)) {
+    $pluginData['pi_gl_version'] = $glversion;
 }
 
 $useSql = getValue($stdin, 'Create SQL files?',
