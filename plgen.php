@@ -308,6 +308,8 @@ function generatePluginFile($filename, $plgdata)
     $content = readTemplate($filename);
     $content = patch($content, $plgdata);
     $content = optionalSections($content, $plgdata);
+    // Remove closing PHP tag if present to avoid accidental output/BOM issues
+    $content = preg_replace('/\?>\s*$/', '', $content);
     writePluginFile($filename, $content, $plgdata);
 }
 
