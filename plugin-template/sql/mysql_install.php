@@ -31,7 +31,7 @@
 // +---------------------------------------------------------------------------+
 
 $_SQL[] = "
-CREATE TABLE IF NOT EXISTS {$_TABLES['foobar']} (
+CREATE TABLE IF NOT EXISTS {$_TABLES['foobar_table']} (
   fbid INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
   title VARCHAR(255) NOT NULL DEFAULT '',
   body TEXT NOT NULL,
