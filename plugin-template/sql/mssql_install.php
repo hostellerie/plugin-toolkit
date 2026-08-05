@@ -31,22 +31,24 @@
 // +---------------------------------------------------------------------------+
 
 $_SQL[] = "
-CREATE TABLE [dbo].[{$_TABLES['foobar']}] (
-    [fbid] [varchar] (40) COLLATE SQL_Latin1_General_CP1_CI_AS NOT NULL,
-    [owner_id] [numeric](8, 0) NOT NULL,
-    [group_id] [numeric](8, 0) NOT NULL,
-    [perm_owner] [tinyint] NOT NULL,
-    [perm_group] [tinyint] NOT NULL,
-    [perm_members] [tinyint] NOT NULL,
-    [perm_anon] [tinyint] NOT NULL
-) ON [PRIMARY] 
+CREATE TABLE [dbo].[{$_TABLES['foobar_table']}] (
+    [id] INT IDENTITY(1,1) NOT NULL,
+    [title] VARCHAR(255) NOT NULL,
+    [body] TEXT NULL,
+    [owner_id] NUMERIC(8,0) NOT NULL,
+    [group_id] NUMERIC(8,0) NOT NULL,
+    [perm_owner] TINYINT NOT NULL,
+    [perm_group] TINYINT NOT NULL,
+    [perm_members] TINYINT NOT NULL,
+    [perm_anon] TINYINT NOT NULL
+) ON [PRIMARY]
 ";
 
-$_SQL[] = "ALTER TABLE [dbo].[{$_TABLES['foobar']}] ADD
-	CONSTRAINT [PK_{$_TABLES['foobar']}] PRIMARY KEY CLUSTERED
-	(
-		[fbid]
-	)  ON [PRIMARY]
+$_SQL[] = "ALTER TABLE [dbo].[{$_TABLES['foobar_table']}] ADD
+    CONSTRAINT [PK_{$_TABLES['foobar_table']}] PRIMARY KEY CLUSTERED
+    (
+        [id]
+    )  ON [PRIMARY]
 ";
 
 ?>
