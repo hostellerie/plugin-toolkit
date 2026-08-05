@@ -33,8 +33,8 @@
 // +---------------------------------------------------------------------------+
 
 /**
-* @package FooBar
-*/
+ * @package FooBar
+ */
 
 if (strpos(strtolower($_SERVER['PHP_SELF']), 'functions.inc') !== false) {
     die ('This file can not be used on its own.');
@@ -54,11 +54,11 @@ if (file_exists($langfile)) {
 
 {optional:use_config_ui}
 /**
-* Check and see if we need to load the plugin configuration
-*/ 
+ * Check and see if we need to load the plugin configuration
+ */
 if (!isset($_FOOBAR_CONF)) {
     require_once $_CONF['path_system'] . 'classes/config.class.php';
-    
+
     $foobar_config = config::get_instance();
     $_FOOBAR_CONF = $foobar_config->get_config('foobar');
 }
@@ -76,14 +76,14 @@ $_TABLES['foobar'] = $_DB_table_prefix . 'foobar';
 // +---------------------------------------------------------------------------+
 
 /**
-* Returns the item(s) for this plugin that should appear on the main menu
-*
-* NOTE: this MUST return the url/value pairs in the following format
-* $<arrayname>[<label>] = <url>
-*
-* @return   mixed   menu entry, or boolean false if disabled / hidden
-*
-*/
+ * Returns the item(s) for this plugin that should appear on the main menu
+ *
+ * NOTE: this MUST return the url/value pairs in the following format
+ * $<arrayname>[<label>] = <url>
+ *
+ * @return   mixed   menu entry, or boolean false if disabled / hidden
+ *
+ */
 function plugin_getmenuitems_foobar()
 {
     global $_CONF, $LANG_FOOBAR_1;
@@ -96,12 +96,12 @@ function plugin_getmenuitems_foobar()
 
 {optional:use_sql}
 /**
-* Geeklog is asking us to provide any items that show up in the type
-* drop-down on search.php.  Let's users search for links.
-*
-* @return   array   (plugin name/entry title) pair for the dropdown
-*
-*/
+ * Geeklog is asking us to provide any items that show up in the type
+ * drop-down on search.php.  Let's users search for links.
+ *
+ * @return   array   (plugin name/entry title) pair for the dropdown
+ *
+ */
 /*
 function plugin_searchtypes_foobar()
 {
@@ -114,21 +114,21 @@ function plugin_searchtypes_foobar()
 */
 
 /**
-* This searches for entries matching the user query and returns an array for the
-* header and table rows back to search.php where it will be formated and printed
-*
-* @param    string  $query      Keywords user is looking for
-* @param    date    $datestart  Start date to get results for
-* @param    date    $dateend    End date to get results for
-* @param    string  $topic      The topic they were searching in
-* @param    string  $type       Type of items they are searching, or 'all' (deprecated)
-* @param    int     $author     Get all results by this author
-* @param    string  $keyType    search key type: 'all', 'phrase', 'any'
-* @param    int     $page       page number of current search (deprecated)
-* @param    int     $perpage    number of results per page (deprecated)
-* @return   object              search result object
-*
-*/
+ * This searches for entries matching the user query and returns an array for the
+ * header and table rows back to search.php where it will be formated and printed
+ *
+ * @param    string  $query      Keywords user is looking for
+ * @param    date    $datestart  Start date to get results for
+ * @param    date    $dateend    End date to get results for
+ * @param    string  $topic      The topic they were searching in
+ * @param    string  $type       Type of items they are searching, or 'all' (deprecated)
+ * @param    int     $author     Get all results by this author
+ * @param    string  $keyType    search key type: 'all', 'phrase', 'any'
+ * @param    int     $page       page number of current search (deprecated)
+ * @param    int     $perpage    number of results per page (deprecated)
+ * @return   object              search result object
+ *
+ */
 /*
 function plugin_dopluginsearch_foobar($query, $datestart, $dateend, $topic, $type, $author, $keyType, $page, $perpage)
 {
@@ -172,14 +172,14 @@ function plugin_dopluginsearch_foobar($query, $datestart, $dateend, $topic, $typ
 
 {/optional:use_sql}
 /**
-* Implements a [foobar:] autotag.
-*
-* @param    string  $op         operation to perform
-* @param    string  $content    item (e.g. story text), including the autotag
-* @param    array   $autotag    parameters used in the autotag
-* @param    mixed               tag names (for $op='tagname') or formatted content
-*
-*/
+ * Implements a [foobar:] autotag.
+ *
+ * @param    string  $op         operation to perform
+ * @param    string  $content    item (e.g. story text), including the autotag
+ * @param    array   $autotag    parameters used in the autotag
+ * @param    mixed               tag names (for $op='tagname') or formatted content
+ *
+ */
 /*
 function plugin_autotags_foobar($op, $content = '', $autotag = '')
 {
@@ -206,11 +206,11 @@ function plugin_autotags_foobar($op, $content = '', $autotag = '')
 */
 
 /**
-* Return plugin entry for "Command and Control" (moderation.php)
-*
-* @return  array  Array containing (plugin name, admin url, url of plugin icon)
-*
-*/
+ * Return plugin entry for "Command and Control" (moderation.php)
+ *
+ * @return  array  Array containing (plugin name, admin url, url of plugin icon)
+ *
+ */
 function plugin_cclabel_foobar()
 {
     global $_CONF, $LANG_FOOBAR_1;
@@ -226,10 +226,10 @@ function plugin_cclabel_foobar()
 }
 
 /**
-* Return plugin entry for the Admins Only block
-*
-* @return array Array containing (plugin name, plugin admin url, # of plugin items or '')
-*/
+ * Return plugin entry for the Admins Only block
+ *
+ * @return array Array containing (plugin name, plugin admin url, # of plugin items or '')
+ */
 function plugin_getadminoption_foobar()
 {
     global $_CONF, $LANG_FOOBAR_1;
@@ -241,11 +241,11 @@ function plugin_getadminoption_foobar()
 }
 
 /**
-* Returns the URL of the plugin's icon
-*
-* @return   string      URL of the icon
-*
-*/
+ * Returns the URL of the plugin's icon
+ *
+ * @return   string      URL of the icon
+ *
+ */
 function plugin_geticon_foobar()
 {
     global $_CONF;
@@ -273,11 +273,11 @@ function plugin_chkVersion_foobar()
 }
 
 /**
-* Update the plugin
-*
-* @return   int     Number of message to display or true for success
-*
-*/
+ * Update the plugin
+ *
+ * @return   int     Number of message to display or true for success
+ *
+ */
 function plugin_upgrade_foobar()
 {
     global $_CONF, $_TABLES;
@@ -308,17 +308,17 @@ function plugin_upgrade_foobar()
 }
 
 /**
-* Automatic uninstall function for plugins
-*
-* This code is automatically uninstalling the plugin.
-* It passes an array to the core code function that removes
-* tables, groups, features and php blocks from the tables.
-* Additionally, this code can perform special actions that cannot be
-* foreseen by the core code (interactions with other plugins for example)
-*
-* @return   array   Plugin information
-*
-*/
+ * Automatic uninstall function for plugins
+ *
+ * This code is automatically uninstalling the plugin.
+ * It passes an array to the core code function that removes
+ * tables, groups, features and php blocks from the tables.
+ * Additionally, this code can perform special actions that cannot be
+ * foreseen by the core code (interactions with other plugins for example)
+ *
+ * @return   array   Plugin information
+ *
+ */
 function plugin_autouninstall_foobar()
 {
     $out = array (
@@ -340,5 +340,3 @@ function plugin_autouninstall_foobar()
 
     return $out;
 }
-
-?>
