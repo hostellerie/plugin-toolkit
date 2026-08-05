@@ -32,8 +32,8 @@
 // +---------------------------------------------------------------------------+
 
 /**
-* @package FooBar
-*/
+ * @package FooBar
+ */
 
 require_once '../../../lib-common.php';
 require_once '../../auth.inc.php';
@@ -53,12 +53,46 @@ if (! SEC_hasRights('foobar.admin')) {
     exit;
 }
 
+// Create a CSRF token for any forms on this page
+$token = SEC_createToken();
 
-// MAIN
+// Handle POST submissions (example) and validate CSRF token
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!SEC_checkToken()) {
+        // Invalid or missing CSRF token — log and show error
+        COM_errorLog('Invalid CSRF token for foobar admin action');
+        $display .= COM_siteHeader('menu', $LANG_FOOBAR_1['plugin_name']);
+        $display .= COM_showMessageText($LANG_FOOBAR_1['plugin_name'], 'Invalid or expired form token. Please try again.');
+        $display .= COM_siteFooter();
+        echo $display;
+        exit;
+    }
+
+    // TODO: process form data safely here
+    // Example: $title = COM_sanitize($_POST['title']); etc.
+
+    $display .= COM_siteHeader('menu', $LANG_FOOBAR_1['plugin_name']);
+    $display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
+    $display .= '<p>Form submitted successfully.</p>';
+    $display .= COM_endBlock();
+    $display .= COM_siteFooter();
+
+    echo $display;
+    exit;
+}
+
+// MAIN — show admin landing page with example form that includes the CSRF token
 $display .= COM_siteHeader('menu', $LANG_FOOBAR_1['plugin_name']);
 $display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
-$display .= '<p>Welcome to the ' . $LANG_FOOBAR_1['plugin_name'] . ' plugin, '
-         . $_USER['username'] . '!</p>';
+$display .= '<p>Welcome to the ' . $LANG_FOOBAR_1['plugin_name'] . ' plugin, ' . $_USER['username'] . '!</p>';
+
+// Example admin form (includes hidden token input)
+$display .= '<form method="post" action="' . COM_buildUrl($_CONF['site_url'] . '/plugins/foobar/admin/index.php') . '">';
+$display .= '<input type="hidden" name="token" value="' . $token . '" />';
+$display .= '<p><label for="title">Title:</label> <input type="text" name="title" id="title" value="" /></p>';
+$display .= '<p><input type="submit" value="Submit" /></p>';
+$display .= '</form>';
+
 $display .= COM_endBlock();
 $display .= COM_siteFooter();
 
