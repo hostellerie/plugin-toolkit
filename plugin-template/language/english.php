@@ -32,14 +32,16 @@
 // +---------------------------------------------------------------------------+
 
 /**
-* @package FooBar
-*/
+ * @package FooBar
+ *
+ * NOTE: This file must be saved in UTF-8 encoding without a BOM (Byte Order Mark).
+ */
 
 /**
-* Import Geeklog plugin messages for reuse
-*
-* @global array $LANG32
-*/
+ * Import Geeklog plugin messages for reuse
+ *
+ * @global array $LANG32
+ */
 global $LANG32;
 
 // +---------------------------------------------------------------------------+
