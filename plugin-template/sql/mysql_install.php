@@ -31,16 +31,18 @@
 // +---------------------------------------------------------------------------+
 
 $_SQL[] = "
-CREATE TABLE {$_TABLES['foobar']} (
-  fbid varchar(40) NOT NULL default '',
-  owner_id mediumint(8) unsigned NOT NULL default '1',
-  group_id mediumint(8) unsigned NOT NULL default '1',
-  perm_owner tinyint(1) unsigned NOT NULL default '3',
-  perm_group tinyint(1) unsigned NOT NULL default '2',
-  perm_members tinyint(1) unsigned NOT NULL default '2',
-  perm_anon tinyint(1) unsigned NOT NULL default '2',
+CREATE TABLE IF NOT EXISTS {$_TABLES['foobar']} (
+  fbid INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+  title VARCHAR(255) NOT NULL DEFAULT '',
+  body TEXT NOT NULL,
+  owner_id MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 1,
+  group_id MEDIUMINT(8) UNSIGNED NOT NULL DEFAULT 1,
+  perm_owner TINYINT(1) UNSIGNED NOT NULL DEFAULT 3,
+  perm_group TINYINT(1) UNSIGNED NOT NULL DEFAULT 2,
+  perm_members TINYINT(1) UNSIGNED NOT NULL DEFAULT 2,
+  perm_anon TINYINT(1) UNSIGNED NOT NULL DEFAULT 2,
   PRIMARY KEY (fbid)
-) ENGINE=MyISAM
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ";
 
 ?>
