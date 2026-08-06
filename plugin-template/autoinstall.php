@@ -1,27 +1,44 @@
 <?php
-/**
- * Functional autoinstall template for Geeklog 2.2.2+
- *
- * This template uses the "function style" autoinstall API which is safer
- * because it does not execute code at include time. It returns an array
- * describing the plugin (info, groups, features, mappings, tables).
- *
- * Additionally this template provides helper stubs for loading the plugin
- * configuration from the database and for checking compatibility with the
- * current Geeklog installation. Replace 'foobar' with your plugin name and
- * rename the functions accordingly (plugin_autoinstall_<yourplugin>,
- * plugin_load_configuration_<yourplugin>, plugin_compatible_with_this_version_<yourplugin>).
- *
- * Do NOT execute logic at the top level of this file. Save the file in
- * UTF-8 without BOM. Do not add a closing PHP tag.
- */
+
+/* Reminder: always indent with 4 spaces (no tabs). */
+// +---------------------------------------------------------------------------+
+// | Foo Bar Plugin 0.0                                                        |
+// +---------------------------------------------------------------------------+
+// | autoinstall.php                                                           |
+// |                                                                           |
+// | Functional autoinstall template for Geeklog 2.2.2+                        |
+// +---------------------------------------------------------------------------+
+// | Copyright (C) yyyy by the following authors:                              |
+// |                                                                           |
+// | Authors: author name goes here                                            |
+// +---------------------------------------------------------------------------+
+// | Created with the Geeklog Plugin Toolkit.                                  |
+// +---------------------------------------------------------------------------+
+// |                                                                           |
+// | This program is free software; you can redistribute it and/or             |
+// | modify it under the terms of the GNU General Public License               |
+// | as published by the Free Software Foundation; either version 2            |
+// | of the License, or (at your option) any later version.                    |
+// |                                                                           |
+// | This program is distributed in the hope that it will be useful,           |
+// | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
+// | GNU General Public License for more details.                              |
+// |                                                                           |
+// | You should have received a copy of the GNU General Public License         |
+// | along with this program; if not, write to the Free Software Foundation,   |
+// | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
+// |                                                                           |
+// +---------------------------------------------------------------------------+
+
+// Do not execute logic at the top level of this file.
+// Save the file in UTF-8 without BOM. Do not add a closing PHP tag.
 
 /**
  * Return autoinstall information for the plugin
  */
 function plugin_autoinstall_foobar($pi_name)
 {
-    // Replace the hardcoded values below with your plugin's values.
     $pi_name         = 'foobar';
     $pi_display_name = 'Foo Bar';
 
@@ -29,7 +46,7 @@ function plugin_autoinstall_foobar($pi_name)
         'pi_name'         => $pi_name,
         'pi_display_name' => $pi_display_name,
         'pi_version'      => '0.0.0',
-        'pi_gl_version'   => '2.2.2', // minimum Geeklog required
+        'pi_gl_version'   => '2.2.2',
         'pi_homepage'     => 'http://www.example.com/'
     );
 
@@ -45,10 +62,6 @@ function plugin_autoinstall_foobar($pi_name)
         $pi_name . '.admin' => array($pi_display_name . ' Admin')
     );
 
-    // Suggested table(s) for your plugin. List names WITHOUT the DB prefix.
-    // The generator will replace 'foobar' with your plugin name when creating
-    // a new plugin. You may change 'foobar_table' to the table name(s) you
-    // need. Keep them unprefixed here.
     $tables = array(
         'foobar_table'
     );
@@ -62,13 +75,8 @@ function plugin_autoinstall_foobar($pi_name)
     );
 }
 
-
 /**
- * Load plugin configuration from database (stub)
- *
- * This helper mirrors the pattern used by many core plugins: it requires the
- * install_defaults.php from the plugin path and calls plugin_initconfig_<plugin>().
- * Implement plugin_initconfig_<yourplugin>() in install_defaults.php.
+ * Load plugin configuration from database
  */
 function plugin_load_configuration_foobar($pi_name)
 {
@@ -81,24 +89,20 @@ function plugin_load_configuration_foobar($pi_name)
     return plugin_initconfig_foobar();
 }
 
-
 /**
- * Check if the plugin is compatible with this Geeklog version (stub)
- *
- * Returns true when the runtime provides the minimal functions/settings the
- * plugin expects. Adjust checks to your plugin's real requirements.
+ * Check if the plugin is compatible with this Geeklog version
  */
 function plugin_compatible_with_this_version_foobar($pi_name)
 {
     global $_CONF, $_DB_dbms;
 
-    // check if we support the DBMS the site is running on
+    // Check if we support the DBMS the site is running on
     $dbFile = $_CONF['path'] . 'plugins/' . $pi_name . '/sql/' . $_DB_dbms . '_install.php';
     if (!file_exists($dbFile)) {
         return false;
     }
 
-    // Example compatibility checks — adapt as needed
+    // Check for required Geeklog core functions
     if (!function_exists('SEC_getGroupDropdown')) {
         return false;
     }
