@@ -12,6 +12,7 @@
 // |                                                                           |
 // | Authors: Dirk Haun              dirk AT haun-online DOT de                |
 // |          Rouslan Placella       rouslan AT placella DOT com               |
+// |          Ben                    hostellerie.org AT gmail DOT com          | 
 // +---------------------------------------------------------------------------+
 // |                                                                           |
 // | This program is free software; you can redistribute it and/or             |
