@@ -22,96 +22,200 @@
 // |                                                                           |
 // | This program is distributed in the hope that it will be useful,           |
 // | but WITHOUT ANY WARRANTY; without even the implied warranty of            |
-// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             |
+// | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the              |
 // | GNU General Public License for more details.                              |
 // |                                                                           |
 // | You should have received a copy of the GNU General Public License         |
 // | along with this program; if not, write to the Free Software Foundation,   |
-// | Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.           |
+// | Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.            |
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 
-// Load Geeklog core and authorization
+// Load Geeklog core and administrator authentication
 require_once '../../../lib-common.php';
 require_once '../../auth.inc.php';
 
 global $_CONF, $_USER, $_PLUGINS, $MESSAGE, $LANG_FOOBAR_1;
 
-// Load plugin language file
-$plugin_path = $_CONF['path'] . 'plugins/foobar/';
-$langfile = $plugin_path . 'language/' . $_CONF['language'] . '.php';
-
-if (file_exists($langfile)) {
-    require_once $langfile;
-} else {
-    require_once $plugin_path . 'language/english.php';
-}
-
+$pluginName = 'foobar';
+$pluginPath = $_CONF['path'] . 'plugins/' . $pluginName . '/';
 $display = '';
 
+// Load the plugin language file
+$languageFile = $pluginPath . 'language/' . $_CONF['language'] . '.php';
+$englishLanguageFile = $pluginPath . 'language/english.php';
+
+if (is_file($languageFile)) {
+    require_once $languageFile;
+} elseif (is_file($englishLanguageFile)) {
+    require_once $englishLanguageFile;
+} else {
+    COM_errorLog(
+        'Unable to load a language file for the ' . $pluginName . ' plugin.'
+    );
+
+    COM_handle404();
+    exit;
+}
+
+// Check whether the plugin is active
+if (!in_array($pluginName, $_PLUGINS, true)) {
+    COM_handle404();
+    exit;
+}
+
 // Check for plugin administration rights
-if (!SEC_hasRights('foobar.admin')) {
-    $display .= COM_showMessageText($MESSAGE[29], $MESSAGE[30]);
-    $display = COM_createHTMLDocument($display, array('pagetitle' => $MESSAGE[30]));
-    
-    $username = isset($_USER['username']) ? $_USER['username'] : 'Anonymous';
-    COM_accessLog("User {$username} tried to illegally access the foobar administration screen.");
-    
+if (!SEC_hasRights($pluginName . '.admin')) {
+    $pageTitle = $MESSAGE[30];
+
+    $display .= COM_showMessageText($MESSAGE[29], $pageTitle);
+
+    $username = $_USER['username'] ?? 'Anonymous';
+
+    COM_accessLog(
+        'User ' . $username
+        . ' tried to illegally access the '
+        . $pluginName
+        . ' administration screen.'
+    );
+
+    $display = COM_createHTMLDocument(
+        $display,
+        array(
+            'pagetitle' => $pageTitle,
+        )
+    );
+
     COM_output($display);
     exit;
 }
 
-// Generate CSRF token for the form
-$token = SEC_createToken();
+$pluginTitle = $LANG_FOOBAR_1['plugin_name'] ?? 'Foo Bar';
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
-    // Verify CSRF token
-    if (!SEC_checkToken()) {
-        COM_errorLog('Invalid CSRF token for foobar admin action');
-        
-        $display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
-        $display .= COM_showMessageText($LANG_FOOBAR_1['invalid_token'], $LANG_FOOBAR_1['plugin_name']);
-        $display .= COM_endBlock();
-        
-        $display = COM_createHTMLDocument($display, array('pagetitle' => $LANG_FOOBAR_1['plugin_name']));
-        COM_output($display);
-        exit;
-    }
+// Handle form submission before creating a new CSRF token
+if (
+    isset($_SERVER['REQUEST_METHOD'])
+    && $_SERVER['REQUEST_METHOD'] === 'POST'
+) {
+    /*
+     * SEC_checkToken() displays the Geeklog reauthentication page
+     * and terminates the script automatically when the token is invalid.
+     */
+    SEC_checkToken();
 
-    // Sanitize and process form data
-    $title = isset($_POST['title']) ? COM_applyFilter($_POST['title']) : '';
+    $title = isset($_POST['title'])
+        ? trim(COM_applyFilter($_POST['title']))
+        : '';
 
-    $display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
-    $display .= '<p>' . $LANG_FOOBAR_1['form_submitted'] . '</p>';
+    /*
+     * Process the submitted value here.
+     *
+     * Example:
+     * PLG_saveTitle($title);
+     */
+
+    $display .= COM_startBlock($pluginTitle);
+    $display .= '<p>'
+        . htmlspecialchars(
+            $LANG_FOOBAR_1['form_submitted'],
+            ENT_QUOTES,
+            COM_getEncodingt()
+        )
+        . '</p>';
     $display .= COM_endBlock();
 
-    $display = COM_createHTMLDocument($display, array('pagetitle' => $LANG_FOOBAR_1['plugin_name']));
+    $display = COM_createHTMLDocument(
+        $display,
+        array(
+            'pagetitle' => $pluginTitle,
+            'menu' => $pluginName,
+        )
+    );
+
     COM_output($display);
     exit;
 }
 
-// Build the administration user interface
-$display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
+// Create a CSRF token only when displaying the form
+$token = SEC_createToken();
 
-$username = isset($_USER['username']) ? $_USER['username'] : '';
-$display .= '<p>' . sprintf($LANG_FOOBAR_1['welcome_admin'], $username) . '</p>';
+// Build the administration interface
+$username = $_USER['username'] ?? '';
 
-$action = COM_buildUrl($_CONF['site_url'] . '/plugins/foobar/admin/index.php');
+$safePluginTitle = htmlspecialchars(
+    $pluginTitle,
+    ENT_QUOTES,
+    COM_getEncodingt()
+);
 
-$display .= '<form method="post" action="' . $action . '">';
-$display .= '<input type="hidden" name="gltoken" value="' . $token . '" />';
-$display .= '<p><label for="title">' . $LANG_FOOBAR_1['label_title'] . '</label> <input type="text" name="title" id="title" value="" /></p>';
-$display .= '<p><input type="submit" value="' . $LANG_FOOBAR_1['submit'] . '" class="uk-button uk-button-primary" /></p>';
+$safeUsername = htmlspecialchars(
+    $username,
+    ENT_QUOTES,
+    COM_getEncodingt()
+);
+
+$welcomeMessage = sprintf(
+    $LANG_FOOBAR_1['welcome_admin'],
+    $safeUsername
+);
+
+$action = $_CONF['site_admin_url']
+    . '/plugins/'
+    . $pluginName
+    . '/index.php';
+
+$display .= COM_startBlock($safePluginTitle);
+
+$display .= '<p>' . $welcomeMessage . '</p>';
+
+$display .= '<form method="post" action="'
+    . htmlspecialchars($action, ENT_QUOTES, COM_getEncodingt())
+    . '">';
+
+$display .= '<input type="hidden" name="'
+    . CSRF_TOKEN
+    . '" value="'
+    . htmlspecialchars($token, ENT_QUOTES, COM_getEncodingt())
+    . '">';
+
+$display .= '<p>';
+$display .= '<label for="title">'
+    . htmlspecialchars(
+        $LANG_FOOBAR_1['label_title'],
+        ENT_QUOTES,
+        COM_getEncodingt()
+    )
+    . '</label> ';
+
+$display .= '<input type="text"'
+    . ' name="title"'
+    . ' id="title"'
+    . ' value=""'
+    . ' maxlength="255"'
+    . '>';
+$display .= '</p>';
+
+$display .= '<p>';
+$display .= '<button type="submit" class="uk-button uk-button-primary">';
+$display .= htmlspecialchars(
+    $LANG_FOOBAR_1['submit'],
+    ENT_QUOTES,
+    COM_getEncodingt()
+);
+$display .= '</button>';
+$display .= '</p>';
+
 $display .= '</form>';
 
 $display .= COM_endBlock();
 
-// Wrap the content in the site theme and output
-$display = COM_createHTMLDocument($display, array(
-    'pagetitle' => $LANG_FOOBAR_1['plugin_name'],
-    'menu' => 'foobar'
-));
+// Wrap the content in the Geeklog theme and output it
+$display = COM_createHTMLDocument(
+    $display,
+    array(
+        'pagetitle' => $pluginTitle,
+        'menu' => $pluginName,
+    )
+);
 
 COM_output($display);
