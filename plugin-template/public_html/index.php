@@ -8,7 +8,7 @@
 // |                                                                           |
 // | Public page template for plugins (Geeklog 2.2.2+)                         |
 // +---------------------------------------------------------------------------+
-// | Copyright (C) 2026 by the following authors:                              |
+// | Copyright (C) yyyy by the following authors:                              |
 // |                                                                           |
 // | Authors: author name goes here                                            |
 // +---------------------------------------------------------------------------+
