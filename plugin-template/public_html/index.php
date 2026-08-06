@@ -32,7 +32,7 @@
 // +---------------------------------------------------------------------------+
 
 // Load Geeklog core
-require_once '../lib-common.php';
+require_once dirname(__DIR__) . '/lib-common.php';
 
 global $_CONF, $_USER, $_PLUGINS, $LANG_FOOBAR_1;
 
