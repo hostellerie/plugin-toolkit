@@ -4,7 +4,7 @@
 // +---------------------------------------------------------------------------+
 // | Foo Bar Plugin 0.0                                                        |
 // +---------------------------------------------------------------------------+
-// | english.php                                                               |
+// | language/english.php                                                      |
 // |                                                                           |
 // | English language file                                                     |
 // +---------------------------------------------------------------------------+
@@ -52,15 +52,18 @@ global $LANG32;
 // +---------------------------------------------------------------------------+
 
 $LANG_FOOBAR_1 = array(
-    'plugin_name' => 'Foo Bar',
-    'hello' => 'Hello, world!' // this is an example only - feel free to remove
+    'plugin_name'    => 'Foo Bar',
+    'invalid_token'  => 'Security token expired or invalid. Please try again.',
+    'form_submitted' => 'Form successfully submitted.',
+    'welcome_admin'  => 'Welcome to the administration panel, %s.',
+    'label_title'    => 'Title:',
+    'submit'         => 'Submit',
+    'welcome_public' => 'Welcome to the public page, %s.'
 );
 
-// Messages for the plugin upgrade
-$PLG_foobar_MESSAGE3002 = $LANG32[9]; // "requires a newer version of Geeklog"
+$PLG_foobar_MESSAGE3002 = $LANG32[9];
 
 {optional:use_config_ui}
-// Localization of the Admin Configuration UI
 $LANG_configsections['foobar'] = array(
     'label' => 'Foo Bar',
     'title' => 'Foo Bar Configuration'
@@ -88,4 +91,3 @@ $LANG_configselects['foobar'] = array(
     1 => array('True' => true, 'False' => false)
 );
 {/optional:use_config_ui}
-?>
