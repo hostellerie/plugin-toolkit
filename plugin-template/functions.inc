@@ -87,6 +87,9 @@ $_TABLES['foobar'] = $_DB_table_prefix . 'foobar';
 function plugin_getmenuitems_foobar()
 {
     global $_CONF, $LANG_FOOBAR_1;
+    
+    // CORRECTIF PHP 8 : Initialisation stricte de la variable
+    $menuitems = array(); 
 
     $url = $_CONF['site_url'] . '/foobar/index.php';
     $menuitems[$LANG_FOOBAR_1['plugin_name']] = $url;
@@ -134,8 +137,8 @@ function plugin_dopluginsearch_foobar($query, $datestart, $dateend, $topic, $typ
 {
     global $_TABLES, $LANG_FOOBAR_1;
 
-    // Make sure the query is SQL safe
-    $query = trim(addslashes($query));
+    // CORRECTIF SÉCURITÉ : Utilisation de DB_escape_string au lieu de addslashes
+    $query = trim(DB_escape_string($query));
 
     // NOTE: Update SQL query to match the actual table used by the
     //       Foo Bar plugin!
@@ -282,9 +285,9 @@ function plugin_upgrade_foobar()
 {
     global $_CONF, $_TABLES;
 
-    $installed_version = DB_getItem($_TABLES['plugins'], 'pi_version',
-                                    "pi_name = 'foobar'");
+    $installed_version = DB_getItem($_TABLES['plugins'], 'pi_version', "pi_name = 'foobar'");
     $code_version = plugin_chkVersion_foobar();
+    
     if ($installed_version == $code_version) {
         // nothing to do
         return true;
@@ -296,7 +299,17 @@ function plugin_upgrade_foobar()
         return 3002;
     }
 
-    // other update code goes here
+    // CORRECTIF : Modern Upgrade Matrix en cascade per Geeklog 2.2.2 specs
+    switch ($installed_version) {
+        case '0.0.0': // Remplacer par l'ancienne version si besoin
+            // Placer ici la logique SQL d'upgrade
+            $installed_version = $code_version;
+            // Ne pas mettre de break pour permettre la cascade
+        case $code_version:
+            break;
+        default:
+            return false;
+    }
 
     // update plugin version number
     $inst_parms = plugin_autoinstall_foobar('foobar');
