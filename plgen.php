@@ -120,7 +120,8 @@ function patch($content, $plgdata)
             break;
 
         case 'copyright':
-            $newComment = formattedComment('Copyright (C) ' . strftime('%Y')
+            // CORRECTIF PHP 8.1+ : Remplacement de strftime par date
+            $newComment = formattedComment('Copyright (C) ' . date('Y')
                             . ' by the following authors:');
             break;
 
