@@ -31,11 +31,13 @@
 // |                                                                           |
 // +---------------------------------------------------------------------------+
 
+// Load Geeklog core and authorization
 require_once '../../../lib-common.php';
 require_once '../../auth.inc.php';
 
 global $_CONF, $_USER, $_PLUGINS, $MESSAGE, $LANG_FOOBAR_1;
 
+// Load plugin language file
 $plugin_path = $_CONF['path'] . 'plugins/foobar/';
 $langfile = $plugin_path . 'language/' . $_CONF['language'] . '.php';
 
@@ -47,6 +49,7 @@ if (file_exists($langfile)) {
 
 $display = '';
 
+// Check for plugin administration rights
 if (!SEC_hasRights('foobar.admin')) {
     $display .= COM_showMessageText($MESSAGE[29], $MESSAGE[30]);
     $display = COM_createHTMLDocument($display, array('pagetitle' => $MESSAGE[30]));
@@ -58,9 +61,13 @@ if (!SEC_hasRights('foobar.admin')) {
     exit;
 }
 
+// Generate CSRF token for the form
 $token = SEC_createToken();
 
+// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    // Verify CSRF token
     if (!SEC_checkToken()) {
         COM_errorLog('Invalid CSRF token for foobar admin action');
         
@@ -73,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
+    // Sanitize and process form data
     $title = isset($_POST['title']) ? COM_applyFilter($_POST['title']) : '';
 
     $display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
@@ -84,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+// Build the administration user interface
 $display .= COM_startBlock($LANG_FOOBAR_1['plugin_name']);
 
 $username = isset($_USER['username']) ? $_USER['username'] : '';
@@ -99,6 +108,7 @@ $display .= '</form>';
 
 $display .= COM_endBlock();
 
+// Wrap the content in the site theme and output
 $display = COM_createHTMLDocument($display, array(
     'pagetitle' => $LANG_FOOBAR_1['plugin_name'],
     'menu' => 'foobar'
